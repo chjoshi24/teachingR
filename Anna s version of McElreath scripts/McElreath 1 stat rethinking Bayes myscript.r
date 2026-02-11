@@ -117,7 +117,7 @@ p_grid <- seq(from=0 , to=1 , length.out=grid_size)
 # define prior across all hypotheses
 prior <- rep(1 , grid_size)
 # Alternative priors:
-#prior <- ifelse( p_grid < 0.5 , 0 , 1 )
+#prior <- ifelse( p_grid < 0.5 , 0 , 1 ) #Anna used this during the meeting!
 #prior <- exp( -5*abs( p_grid - 0.5 ) )
 # Standardizing just for the sake of the graph
 prior <- prior/sum(prior)
