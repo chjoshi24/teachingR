@@ -109,8 +109,44 @@ dbinom(no_of_successes, size=no_of_samples , prob=0.5 )
 
 ### CODING THE GLOBE TOSSING PROBLEM with three motors ---------------------- 
 # We define three functions to estimate the posterior in three ways.
-
 #### (1) Simple Grid approximation: -------------
+
+#Chinmay: I'm playing around the code.So, I will deconstruct it as and when required
+
+#This is the code from the book with my comments written here (Chapter 2)
+
+#Defining a grid. This grid defines all possible values of the parameter.
+#Here, the parameter is proportion of water (which is what we are estimating through this exercise)
+
+p_grid <- seq(from=0 , to=1 , length.out=20)
+
+#Defining a prior
+prior<-rep(1,20)
+
+#Calculating likelihood at each value in grid.
+#This is likelihood of getting 6 waters when the globe is tossed 9 times. 
+#We are calculating the likelihood of getting 6 waters in 9 tosses given the
+#proportion of water (parameter). We are doing this exercise for each possible 
+#value of 'p' i.e., the proportion of water. 
+
+#In other words we are are estimating the plausibility of the each conjecture that 
+# 6 out of 9 waters will result in a specific proportion of water 'p' from 0 to 1
+likelihood <- dbinom(6 , size=9 , prob=p_grid )
+
+#Computing the product of likelihood and prior to get the posterior!
+#Next step: Standardizing the posterior to make sure the sum is 1 i.e., normalization!
+
+unstd.posterior <- likelihood * prior
+posterior <- unstd.posterior / sum(unstd.posterior)
+
+plot( p_grid , posterior , type="b" ,xlab="probability of water" , ylab="posterior probability" )
+mtext( "20 points" )
+
+
+#Chinmay: Anna's code nicely illustrates that if one changes the prior, the 
+#posterior distribution changes!
+
+#Anna's code (Anna have written a function to do the same exercise)
 grid_approx <- function(W, L, grid_size=10) {
 # define grid of possible hypotheses/values of thing to be estimated
 p_grid <- seq(from=0 , to=1 , length.out=grid_size)
@@ -157,6 +193,26 @@ grid_approx(5, 3)
 
 
 #### (2) Quadratic approximation using quap(): -----------------
+
+#Chinmay: I'm playing around the code from the book (Ch2)
+
+#The alist function does not evaluate the operation in the list, but keeps them as it is
+#For example alist(1+1) would give a list with 1+1 as the element (unevaluated)
+#Then quap function evaluates the alist element
+
+globe.qa <- quap(
+  alist(
+    W ~ dbinom(W+L ,p) , # binomial likelihood
+    p ~ dunif(0,1) # uniform prior
+  ) ,
+  data=list(W=6,L=3) )
+# display summary of quadratic approximation
+
+#This provides the summary of the parameter estimate from the exercise done above
+precis(globe.qa )
+
+
+#Anna's code:
 globe.qa <- function(W, L) {
   summary_quadratic_approx <- 
     # precis() is his 'summarize model results' function
