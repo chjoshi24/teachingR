@@ -145,6 +145,7 @@ mu.list <- seq(from=150, to=160 , length.out=1000)
 sigma.list <- seq(from=7 , to=9 , length.out=1000)
 # Make a list of all combinations (our 'grid' is now a 2-D grid not just a list)
 post <- expand.grid(mu=mu.list, sigma=sigma.list)
+# Chinmay- This is not the posterior yet!This is just the grid together
 
 # Likelihood function
 # How often will you get this height given each possible mu and sigma
