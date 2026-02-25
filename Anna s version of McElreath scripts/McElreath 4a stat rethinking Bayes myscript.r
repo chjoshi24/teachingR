@@ -45,11 +45,13 @@ d2 <- d[d$age >= 18, ]
 # distributed error U. This means we have parameters slope (b), intercept (i),
 # and standard deviation of U (sd). 
 # We're going to assume the heights H are not yet standardized.
-sim_weight <- function(H, b, i, sd) {
-  U <- rnorm(length(H), 0, sd)
-  W <- b * (H - mean(H)) + i + U
+sim_weight <- function(inputfactor, slope, intercept, sd) {
+  error <- rnorm(length(inputfactor), 0, sd)
+  W <- slope * inputfactor + intercept + error
   return(W)
 }
+#Chinmay: The error term here gives a different error for each 'x' value
+#This simulates real regression.
 
 #### Define hypothesis simulated ------------------
 
@@ -60,6 +62,8 @@ N_2 <- 10
 N_3 <- 100
 
 # Parameters for the generative model. We assume units of kg and cm.
+#Chinmay: This is not the prior, but just a simulated set of slopes, 
+# intercepts and error term
 slope_b <- 0.7 # b
 intercept_w_h <- 50 # i
 error_term <- 5 # sigma
@@ -70,6 +74,8 @@ mean_height <- 170
 sd_height <- 10
 
 # Now, we're on the way to generating three sets of fake data for our model:
+
+#Chinmay: This simulates distribution of independent variable
 heights1 <- rnorm(N_1, mean = mean_height, sd = sd_height)
 heights2 <- rnorm(N_2, mean = mean_height, sd = sd_height)
 heights3 <- rnorm(N_3, mean = mean_height, sd = sd_height)
@@ -85,6 +91,12 @@ colnames(simdata2) <- c("Height", "Weight")
 weights3 <- sim_weight(heights3, slope_b, intercept_w_h, error_term) 
 simdata3 <- data.frame(heights3, weights3)
 colnames(simdata3) <- c("Height", "Weight")
+
+#Chinmay: Plotting the data
+par(mfrow=c(1,3))
+plot(simdata1)
+plot(simdata2)
+plot(simdata3)
 
 ### Prep real data ---------------------------------------
 # The real data we will use is d2.
