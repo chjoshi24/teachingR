@@ -142,6 +142,34 @@ posterior <- unstd.posterior / sum(unstd.posterior)
 plot( p_grid , posterior , type="b" ,xlab="probability of water" , ylab="posterior probability" )
 mtext( "20 points" )
 
+#Playing around the code from Ch3 for grid approximation:
+
+p_grid <- seq( from=0 , to=1 , length.out=1000 )
+prob_p <- rep( 1 , 1000 )
+prob_data <- dbinom( 6 , size=9 , prob=p_grid )
+posterior <- prob_data * prob_p
+posterior <- posterior / sum(posterior)
+
+#This function samples 10000 values form the posterior distribution above
+#as follows: Drawing a certain value from posterior distribution in proportion
+#to its posterior probability. Therefore, values near the peak i.e., the most 
+#plausible values are sampled more frequently than the ones that are at the tails
+
+samples <- sample( p_grid , prob=posterior , size=1e4 , 
+                   replace=TRUE )
+
+sum(samples<0.5)/1e4
+
+
+#Ch3: Computing posterior distribution for getting 3 waters with 3 tosses
+p_grid <- seq( from=0 , to=1 , length.out=1000 )
+prior <- rep(1,1000)
+likelihood <- dbinom( 3 , size=3 , prob=p_grid )
+posterior <- likelihood * prior
+posterior <- posterior / sum(posterior)
+samples <- sample( p_grid , size=1e4 , replace=TRUE , prob=posterior )
+
+PI(samples,prob=0.5)
 
 #Chinmay: Anna's code nicely illustrates that if one changes the prior, the 
 #posterior distribution changes!

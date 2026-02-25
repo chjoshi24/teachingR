@@ -140,6 +140,7 @@ dens(prior_h)
 # Grid approximation is going to be increasingly hard with complex models, 
 # but we're doing it again here:
 # Make a list of mu's
+#Chinmay: mu.list is the possible values of the parameters (i.e., mean and sd of height)
 mu.list <- seq(from=150, to=160 , length.out=1000)
 # Make a list of sigmas
 sigma.list <- seq(from=7 , to=9 , length.out=1000)
@@ -153,10 +154,15 @@ post$LL <- sapply(1:nrow(post), function(i) sum(
   dnorm(d2$height, post$mu[i], post$sigma[i], log=TRUE)))
 
 # Product of prior and likelihood
+#Chinmay: We are making the prior also on a log scale. This is the only reason why
+#we can add them (equivalent of multiplication on log scale)
 post$prod <- post$LL + dnorm(post$mu, 178, 20, TRUE) +
   dunif(post$sigma, 0, 50, TRUE)
 
 # Standardization to 1
+#Chinmay: To get the posterior, we take log of exponential (to get the exponent).
+#However, the values are very small, so we normalize it by subtracting the max value
+#which is equivalent of division on log scale.
 post$prob <- exp(post$prod - max(post$prod))
 
 # There are many combinations of mu and sigma, and we just calculated a 
